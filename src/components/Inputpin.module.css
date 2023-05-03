@@ -9,12 +9,22 @@
 }
 
 .pin {
-    margin-top: 50px;
+    margin-top: 20px;
     border-radius: 5px;
     width: 200px;
     height: 30px;
 }
 
-.textzone {
+.pinforgetbutton {
     margin-top: 50px;
+    border: none;
+    outline: none;
+    background:none;
+    cursor: pointer;
 }
+
+.textname {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
