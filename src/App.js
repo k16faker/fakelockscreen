@@ -1,9 +1,11 @@
-import React,{useEffect, useState} from 'react';
+import React,{useEffect} from 'react';
 import Inputpin from './components/Inputpin';
 import classes from './App.module.css';
 
 
 function App() {
+
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.keyCode !== 8 && (e.keyCode < 48 || e.keyCode > 57)) {
@@ -17,6 +19,7 @@ function App() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
 
 
   // useEffect(() => {
