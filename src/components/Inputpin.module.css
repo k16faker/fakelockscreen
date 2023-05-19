@@ -15,6 +15,16 @@
     height: 30px;
 }
 
+.pinbutton {
+    font-family:'Times New Roman', Times, serif;
+    font-size: 20px;
+    border-radius: 30px;
+    height: 70px;
+    width: 130px;
+    margin-top: 20px;
+}
+
+
 .pinforgetbutton {
     margin-top: 50px;
     border: none;

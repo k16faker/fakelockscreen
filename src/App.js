@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react';
 import Inputpin from './components/Inputpin';
-import classes from './App.module.css';
+
 
 
 function App() {
@@ -18,7 +18,6 @@ function App() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
 
 
 
@@ -34,12 +33,12 @@ function App() {
   //   return () => {
   //     window.removeEventListener('keydown', handlekeypress);
   //   }
-  // }, []);
+   }, []);
 
 
 
   return (
-    <div className={classes.fullscreen}>
+    <div>
       <Inputpin />
     </div>
   );
