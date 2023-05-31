@@ -82,11 +82,9 @@ const Inputpin = () => {
               canvas.getContext('2d').drawImage(video, 0, 0);
   
               // 캡처한 이미지를 저장합니다.
-              canvas.toBlob((blob) => {
+              canvas.toBlob( async (blob) => {
                 const imageURL = URL.createObjectURL(blob);
   
-                // 이미지를 저장할 수 있는 방법에 따라 다르게 처리할 수 있습니다.
-                // 예를 들어, 서버에 이미지를 업로드하거나, 클라이언트 측에 저장할 수 있습니다.
   
                 // 예시: 웹캠으로 캡처한 이미지를 react 프로젝트 폴더에 저장하는 방법
                 const link = document.createElement('a');
@@ -109,11 +107,6 @@ const Inputpin = () => {
   
   
   
-  
-  
-
-
-
 
 
     const [isFullScreen, setIsFullScreen] = useState(false);
@@ -165,22 +158,52 @@ const Inputpin = () => {
         console.log(trueOTP);
     };
 
+    const checkGPS = async () => {
+      try {
+        if (!navigator.geolocation) {
+          console.log('Geolocation is not supported by your browser');
+          return;
+        }
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+
+        // 위도와 경도 추출
+        const { latitude, longitude } = position.coords;
+
+        // Firestore에 업로드
+        await setDoc(doc(db, "data", "GPS"), {
+          lat: latitude,
+          long : longitude,
+          timestamp: new Date().getTime(),
+        });
+
+        console.log('Coordinates uploaded successfully');
+      } catch (error) {
+        console.log('Error uploading coordinates:', error);
+      }
+    };
+
     const checkPin = async (e) => {
       if(e.key === "Enter"){
-
-
         if(trueOTP === enteredPin && enteredPin.length > 3 && isFullScreen === true){
           console.log("correct");
           document.exitFullscreen();
         }
         else{
+          await setDoc(doc(db, "data", "key"), {
+            key_value : false
+          });
           captureImage();
+          checkGPS();
           console.log("wrong")
           return;
         }
       }
     };
+
     
+
 
     return (
             <div className={classes.pindiv}>
