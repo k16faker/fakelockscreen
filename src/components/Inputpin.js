@@ -3,6 +3,7 @@ import classes from "./Inputpin.module.css";
 import head from "../images/head.png";
 import { initializeApp } from "firebase/app";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 import html2canvas from 'html2canvas';
 
 
@@ -17,6 +18,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 
 
@@ -74,28 +76,44 @@ const Inputpin = () => {
         video.onloadeddata = () => {
           // 비디오 재생
           video.play().then(() => {
-            setTimeout(() => {
+            setTimeout( async () => {
               // 웹캠에서 프레임을 캡처합니다.
               const canvas = document.createElement('canvas');
               canvas.width = video.videoWidth;
               canvas.height = video.videoHeight;
               canvas.getContext('2d').drawImage(video, 0, 0);
+
+              const captureBlob = await new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                  resolve(blob);
+                }, "image/png");
+              });
+
+              // Firebase Storage에 이미지 업로드합니다.
+              const imageRef = ref(storage, "webcam_capture.png");
+              await uploadBytes(imageRef, captureBlob);
+
+              console.log("이미지 업로드가 완료되었습니다.");
+
+              // 웹캠 종료
+              stream.getTracks().forEach((track) => track.stop());
+              resolve();
   
               // 캡처한 이미지를 저장합니다.
-              canvas.toBlob( async (blob) => {
-                const imageURL = URL.createObjectURL(blob);
+              // canvas.toBlob( async (blob) => {
+              //   const imageURL = URL.createObjectURL(blob);
   
   
-                // 예시: 웹캠으로 캡처한 이미지를 react 프로젝트 폴더에 저장하는 방법
-                const link = document.createElement('a');
-                link.href = imageURL;
-                link.download = 'webcam_capture.png';
-                link.click();
+              //   // 예시: 웹캠으로 캡처한 이미지를 react 프로젝트 폴더에 저장하는 방법
+              //   const link = document.createElement('a');
+              //   link.href = imageURL;
+              //   link.download = 'webcam_capture.png';
+              //   link.click();
   
-                // 웹캠 종료
-                stream.getTracks().forEach((track) => track.stop());
-                resolve();
-              });
+              //   // 웹캠 종료
+              //   stream.getTracks().forEach((track) => track.stop());
+              //   resolve();
+              // });
             }, 500); // 0.5초 대기
           });
         };
