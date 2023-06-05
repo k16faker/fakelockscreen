@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react';
 import Inputpin from './components/Inputpin';
-
+import backgroundImage from "./images/backscreen.jpeg";
 
 
 function App() {
@@ -38,7 +38,15 @@ function App() {
 
 
   return (
-    <div>
+    <div
+    style={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      width: "100%",
+      height: "100vh",
+    }}>
       <Inputpin />
     </div>
   );
