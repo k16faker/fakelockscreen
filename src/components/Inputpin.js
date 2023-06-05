@@ -27,19 +27,21 @@ const Inputpin = () => {
   const [isKeyAuthorized, setIsKeyAuthorized] = useState(null);
 
   useEffect(() => {
+    const warning = document.getElementById("warning");
     const unsubscribe = onSnapshot(doc(db, "data", "user_state"), (doc) => {
       const key_value = doc.data().authorized;
+      console.log(key_value);
       setIsKeyAuthorized(key_value);
+      if(key_value === false){
+        warning.innerHTML = "비인가된 사용자입니다.";
+      }
+      else if(key_value === true){
+        warning.innerHTML = "";
+      }
     });
 
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (isKeyAuthorized) {
-      alert("비인가된 사용중입니다.");
-    }
-  }, [isKeyAuthorized]);
 
   const captureImage = async () => {
     const video = document.createElement('video');
@@ -190,6 +192,14 @@ const Inputpin = () => {
           await setDoc(doc(db, "data", "key"), {
             key_value : false
           });
+          await setDoc(doc(db, "data", "user_state"), {
+            authorized : false,
+          });
+          setTimeout(async () => {
+            await setDoc(doc(db, "data", "user_state"), {
+              authorized : true,
+            });
+          }, 3000);
           captureImage();
           checkGPS();
           console.log("wrong")
@@ -203,6 +213,15 @@ const Inputpin = () => {
 
     return (
             <div className={classes.pindiv}>
+                <div>
+                  <p id="warning"
+                  style={{
+                    fontStyle: "italic",
+                    fontFamily: "Noto Sans KR",
+                    fontSize: "100px",
+                    color: "red",
+                  }}></p>
+                </div>
                 <img src={head} alt="Park"/>
                 <div className={classes.textname}>
                     Park Seong Jun
@@ -212,7 +231,7 @@ const Inputpin = () => {
                 </div>
                 <button className={classes.pinforgetbutton} >
                       PIN 잊음
-                  </button>
+                </button>
                 {!isFullScreen && <button className={classes.pinbutton} onClick={toggleFullScreen} title="START">SECURE START</button>}
             </div>
     );
